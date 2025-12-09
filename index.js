@@ -1,35 +1,23 @@
 import express from "express";
 import fetch from "node-fetch";
-import bodyParser from "body-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-// ***** CORS CONFIG *****
-const allowedOrigins = [
-  "https://ai-logistics-booking.gwcdata.ai",
-  "http://localhost:3001",
-];
+const corsOptions = {
+  origin: "https://ai-logistics-booking.gwcdata.ai", // http://localhost:3001
+  credentials: true,
+};
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Postman / server-side requests
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS: " + origin));
-    },
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
+app.use(cookieParser());
 
 // ===== CONFIG =====
-// Replace these with your real values from Zoom App Marketplace
 const ACCOUNT_ID = "lLaWyWQnTeu3Xs5aUqijJg";
 const AUTH_HEADER = "Basic WWMwZE5aeFBRSWl2aFIxU09hVnRkdzprWGNhWHhyaHgyTkFQQlFUZDh5bXRyVERyM0p5QjVqdQ=="; 
-// Example: Basic bXlDbGllbnRJRDpteUNsaWVudFNlY3JldA==
 
 // ===== ROUTE TO GET ACCESS TOKEN =====
 app.get("/zoom/token", async (req, res) => {
