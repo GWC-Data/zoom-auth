@@ -3,17 +3,15 @@ import fetch from "node-fetch";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import ExcelJS from "exceljs";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-const allowedOrigins = [
-  "https://ai-logistics-booking.gwcdata.ai",
-  "http://localhost:8080",
-  "http://localhost:3001",
-  "http://127.0.0.1:8080",
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -29,12 +27,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-// ===== CONFIG =====
-const ACCOUNT_ID = "lLaWyWQnTeu3Xs5aUqijJg";
-const AUTH_HEADER =
-  "Basic WWMwZE5aeFBRSWl2aFIxU09hVnRkdzprWGNhWHhyaHgyTkFQQlFUZDh5bXRyVERyM0p5QjVqdQ==";
+const ACCOUNT_ID = process.env.ACCOUNT_ID;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const MEETING_ID = process.env.MEETING_ID;
 
-// ===== ROUTE TO GET ACCESS TOKEN =====
+const AUTH_HEADER = `Basic ${Buffer.from(
+  `${CLIENT_ID}:${CLIENT_SECRET}`
+).toString("base64")}`;
+
 const getZoomAccessToken = async () => {
   const params = new URLSearchParams();
   params.append("grant_type", "account_credentials");
@@ -58,7 +59,6 @@ const getZoomAccessToken = async () => {
   }
 };
 
-// ===== ROUTE TO GET ACCESS TOKEN =====
 app.get("/zoom/token", async (req, res) => {
   try {
     const data = await getZoomAccessToken();
@@ -118,13 +118,11 @@ app.post("/zoom/register", async (req, res) => {
 
 app.get("/zoom/get-registrants", async (req, res) => {
   try {
-    const meeting_id = "84054283097";
-
     const token = await getZoomAccessToken();
     const access_token = token.access_token;
 
     const response = await fetch(
-      `https://api.zoom.us/v2/meetings/${meeting_id}/registrants`,
+      `https://api.zoom.us/v2/meetings/${MEETING_ID}/registrants`,
       {
         method: "GET",
         headers: {
@@ -186,7 +184,7 @@ app.get("/zoom/get-registrants", async (req, res) => {
       );
       res.setHeader(
         "Content-Disposition",
-        "attachment; filename=" + `registrants-${meeting_id}.xlsx`
+        "attachment; filename=" + `registrants-${MEETING_ID}.xlsx`
       );
 
       // Write to Response
@@ -203,7 +201,6 @@ app.get("/zoom/get-registrants", async (req, res) => {
   }
 });
 
-// ===== START SERVER =====
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Zoom Server-to-Server OAuth running on port ${PORT}`);
