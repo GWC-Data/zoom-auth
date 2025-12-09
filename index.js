@@ -7,8 +7,21 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://ai-logistics-booking.gwcdata.ai",
+  "http://localhost:8080",
+  "http://localhost:3001",
+  "http://127.0.0.1:8080",
+];
+
 const corsOptions = {
-  origin: "https://ai-logistics-booking.gwcdata.ai", // http://localhost:3001
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 };
 
@@ -17,7 +30,8 @@ app.use(cookieParser());
 
 // ===== CONFIG =====
 const ACCOUNT_ID = "lLaWyWQnTeu3Xs5aUqijJg";
-const AUTH_HEADER = "Basic WWMwZE5aeFBRSWl2aFIxU09hVnRkdzprWGNhWHhyaHgyTkFQQlFUZDh5bXRyVERyM0p5QjVqdQ=="; 
+const AUTH_HEADER =
+  "Basic WWMwZE5aeFBRSWl2aFIxU09hVnRkdzprWGNhWHhyaHgyTkFQQlFUZDh5bXRyVERyM0p5QjVqdQ==";
 
 // ===== ROUTE TO GET ACCESS TOKEN =====
 app.get("/zoom/token", async (req, res) => {
@@ -30,9 +44,9 @@ app.get("/zoom/token", async (req, res) => {
       method: "POST",
       headers: {
         Authorization: AUTH_HEADER,
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: params
+      body: params,
     });
 
     const data = await response.json();
@@ -49,10 +63,9 @@ app.get("/zoom/token", async (req, res) => {
   }
 });
 
-
 app.post("/zoom/register", async (req, res) => {
   try {
-    const {formData, token, meeting_id} = req.body; // coming from frontend form
+    const { formData, token, meeting_id } = req.body; // coming from frontend form
 
     const payload = {
       first_name: formData.firstName,
@@ -65,7 +78,7 @@ app.post("/zoom/register", async (req, res) => {
       custom_questions: [
         {
           title: "purposeForJoining",
-          value: formData.purposeForJoining
+          value: formData.purposeForJoining,
         },
       ],
       auto_approve: true,
@@ -96,7 +109,6 @@ app.post("/zoom/register", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // ===== START SERVER =====
 const PORT = 3001;
