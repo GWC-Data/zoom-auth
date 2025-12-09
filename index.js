@@ -5,7 +5,25 @@ import cors from "cors";
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+
+// ***** CORS CONFIG *****
+const allowedOrigins = [
+  "https://ai-logistics-booking.gwcdata.ai",
+  "http://localhost:3001",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Postman / server-side requests
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS: " + origin));
+    },
+    credentials: true,
+  })
+);
 
 // ===== CONFIG =====
 // Replace these with your real values from Zoom App Marketplace
