@@ -122,7 +122,7 @@ app.get("/zoom/get-registrants", async (req, res) => {
     const access_token = token.access_token;
 
     const response = await fetch(
-      `https://api.zoom.us/v2/meetings/${MEETING_ID}/registrants`,
+      `https://api.zoom.us/v2/meetings/${MEETING_ID}/registrants?page_size=300`,
       {
         method: "GET",
         headers: {
