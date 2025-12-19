@@ -78,13 +78,11 @@ app.post("/zoom/register", async (req, res) => {
       last_name: formData.lastName,
       email: formData.email,
       phone: formData.mobileNumber,
-      industry: formData.industry,
-      job_title: formData.jobTitle,
-      org: formData.organization,
+      city: formData.location,
       custom_questions: [
         {
-          title: "purposeForJoining",
-          value: formData.purposeForJoining,
+          title: "ai_skill",
+          value: formData.ai_skill,
         },
       ],
       auto_approve: true,
