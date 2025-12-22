@@ -144,11 +144,9 @@ app.get("/zoom/get-registrants", async (req, res) => {
         { header: "First Name", key: "first_name", width: 20 },
         { header: "Last Name", key: "last_name", width: 20 },
         { header: "Email", key: "email", width: 30 },
-        { header: "Job Title", key: "job_title", width: 25 },
-        { header: "Organization", key: "org", width: 25 },
-        { header: "Industry", key: "industry", width: 20 },
         { header: "Mobile", key: "phone", width: 15 },
-        { header: "Purpose", key: "purpose", width: 40 },
+        { header: "City", key: "city", width: 15 },
+        { header: "AI Skill", key: "ai_skill", width: 40 },
         { header: "Created At", key: "create_time", width: 25 },
       ];
 
