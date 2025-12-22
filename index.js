@@ -154,18 +154,16 @@ app.get("/zoom/get-registrants", async (req, res) => {
       registrants.forEach((reg) => {
         // Find custom question for Purpose if exists
         const purposeQ = reg.custom_questions?.find(
-          (q) => q.title === "purposeForJoining"
+          (q) => q.title === "ai_skill"
         );
 
         worksheet.addRow({
           first_name: reg.first_name,
           last_name: reg.last_name,
           email: reg.email,
-          job_title: reg.job_title,
-          org: reg.org,
-          industry: reg.industry,
           phone: reg.phone,
-          purpose: purposeQ ? purposeQ.value : "",
+          city: reg.city,
+          ai_skill: purposeQ ? purposeQ.value : "",
           create_time: reg.create_time,
         });
       });
